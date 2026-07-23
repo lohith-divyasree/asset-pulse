@@ -1,19 +1,18 @@
 import fs from 'fs';
 import path from 'path';
-import { db } from './index'; // Make sure this points to your initialized Drizzle database instance
-import { assetCategories, assetSubcategories, properties } from './schema';
+import { db } from './index';
+import { assetCategories, assetSubcategories, properties, assets } from './schema';
 
 interface SeedData {
-  properties: (typeof properties.$inferInsert)[];
-  categories: (typeof assetCategories.$inferInsert)[];
-  subcategories: (typeof assetSubcategories.$inferInsert)[];
+  properties: any[];
+  categories: any[];
+  subcategories: any[];
 }
 
 async function runSeed() {
   console.log('🌱 Starting database seeding from seed-data.json...\n');
 
   try {
-    // 1. Locate and read the seed-data.json file
     const jsonPath = path.join(__dirname, 'seed-data.json');
     if (!fs.existsSync(jsonPath)) {
       throw new Error(`Seed file not found at path: ${jsonPath}`);
@@ -22,32 +21,45 @@ async function runSeed() {
     const fileContent = fs.readFileSync(jsonPath, 'utf-8');
     const data: SeedData = JSON.parse(fileContent);
 
-    // 2. Clear existing data in correct dependency order
     console.log('🧹 Clearing existing data...');
+    // Clear dependent assets first to satisfy Foreign Key constraints
+    await db.delete(assets); 
     await db.delete(assetSubcategories);
     await db.delete(assetCategories);
     await db.delete(properties);
     console.log('   ✓ Tables cleared cleanly.\n');
 
-    // 3. Seed Properties
-    if (data.properties && data.properties.length > 0) {
+    if (data.properties?.length) {
       console.log(`🏢 Ingesting ${data.properties.length} properties...`);
       await db.insert(properties).values(data.properties).onConflictDoNothing();
       console.log('   ✓ Properties seeded successfully.');
     }
 
-    // 4. Seed Categories (Root Taxonomy)
-    if (data.categories && data.categories.length > 0) {
+    if (data.categories?.length) {
       console.log(`📦 Ingesting ${data.categories.length} categories...`);
       await db.insert(assetCategories).values(data.categories).onConflictDoNothing();
       console.log('   ✓ Categories seeded successfully.');
     }
 
-    // 5. Seed Subcategories (Linked to Categories via categoryId)
-    if (data.subcategories && data.subcategories.length > 0) {
+    if (data.subcategories?.length) {
       console.log(`🏷️ Ingesting ${data.subcategories.length} subcategories...`);
-      await db.insert(assetSubcategories).values(data.subcategories).onConflictDoNothing();
-      console.log('   ✓ Subcategories seeded successfully.');
+      
+      // Explicitly map keys to accommodate both camelCase and snake_case Drizzle schemas
+      const subcategoryValues = data.subcategories.map((sub) => ({
+        id: sub.id,
+        categoryId: sub.categoryId || sub.category_id,
+        code: sub.code,
+        name: sub.name,
+        // Map curatedMakes for both JS and DB column conventions
+        curatedMakes: sub.curatedMakes || sub.curated_makes || [],
+        curated_makes: sub.curatedMakes || sub.curated_makes || [],
+        // Map specSchema for both JS and DB column conventions
+        specSchema: sub.specSchema || sub.spec_schema || [],
+        spec_schema: sub.specSchema || sub.spec_schema || [],
+      }));
+
+      await db.insert(assetSubcategories).values(subcategoryValues as any).onConflictDoNothing();
+      console.log('   ✓ Subcategories seeded successfully with specSchema and curatedMakes.');
     }
 
     console.log('\n✅ Database seeding completed successfully!');

@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm'; // 👈 MUST IMPORT eq HERE
+import { eq, ilike } from 'drizzle-orm';
 import { db } from '@asset-pulse/db';
-import { assets, assetCategories, assetSubcategories, properties } from '@asset-pulse/db/schema';
+import {
+  assets,
+  assetCategories,
+  assetSubcategories,
+  properties,
+} from '@asset-pulse/db/schema';
 
 export async function GET() {
   try {
@@ -9,19 +14,20 @@ export async function GET() {
     return NextResponse.json({ success: true, data: allAssets });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: "Failed to fetch assets" },
-      { status: 500 },
+      { success: false, error: 'Failed to fetch assets' },
+      { status: 500 }
     );
   }
 }
 
 export async function POST(req: Request) {
   try {
+    const userId = req.headers.get('x-user-id');
     const body = await req.json();
 
+    // 1. Property Verification & Fallback
     let targetPropertyId = body.propertyId;
 
-    // 1. Verify propertyId exists in DB, or fallback to first seeded property
     if (targetPropertyId) {
       const [existingProp] = await db
         .select()
@@ -46,10 +52,49 @@ export async function POST(req: Request) {
       );
     }
 
-    let targetSubcategoryId = body.subcategoryId;
+    // 2. Category & Subcategory Logic (Manual Overrides & Fallbacks)
     let targetCategoryId = body.categoryId;
+    let targetSubcategoryId = body.subcategoryId;
 
-    // 2. Fallback for subcategory if not provided by payload
+    if (body.isManualCategory) {
+      // Handle Manual Category/Subcategory Creation
+      if (body.customCategory) {
+        let [existingCat] = await db
+          .select()
+          .from(assetCategories)
+          .where(ilike(assetCategories.name, body.customCategory.trim()))
+          .limit(1);
+
+        if (!existingCat) {
+          [existingCat] = await db
+            .insert(assetCategories)
+            .values({ name: body.customCategory.trim() })
+            .returning();
+        }
+        targetCategoryId = existingCat.id;
+      }
+
+      if (body.customSubcategory && targetCategoryId) {
+        let [existingSub] = await db
+          .select()
+          .from(assetSubcategories)
+          .where(ilike(assetSubcategories.name, body.customSubcategory.trim()))
+          .limit(1);
+
+        if (!existingSub) {
+          [existingSub] = await db
+            .insert(assetSubcategories)
+            .values({
+              name: body.customSubcategory.trim(),
+              categoryId: targetCategoryId,
+            })
+            .returning();
+        }
+        targetSubcategoryId = existingSub.id;
+      }
+    }
+
+    // Fallbacks if IDs are still missing
     if (!targetSubcategoryId) {
       const [defaultSub] = await db.select().from(assetSubcategories).limit(1);
       targetSubcategoryId = defaultSub?.id;
@@ -58,24 +103,29 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. Fallback for category if subcategory was provided but category was missing
     if (!targetCategoryId && targetSubcategoryId) {
       const [foundSub] = await db
         .select()
         .from(assetSubcategories)
-        .where(eq(assetSubcategories.id, targetSubcategoryId)) // 👈 USE eq() HERE
+        .where(eq(assetSubcategories.id, targetSubcategoryId))
         .limit(1);
 
       targetCategoryId = foundSub?.categoryId;
     }
 
-    // 4. Fallback for root category if no records match
     if (!targetCategoryId) {
       const [defaultCat] = await db.select().from(assetCategories).limit(1);
       targetCategoryId = defaultCat?.id;
     }
 
-    // Insert into Neon Postgres
+    if (!targetCategoryId || !targetSubcategoryId) {
+      return NextResponse.json(
+        { success: false, error: 'Failed to assign a valid Category/Subcategory ID.' },
+        { status: 400 }
+      );
+    }
+
+    // 3. Insert into Neon Postgres
     const [insertedAsset] = await db
       .insert(assets)
       .values({
@@ -85,11 +135,19 @@ export async function POST(req: Request) {
         subcategoryId: targetSubcategoryId,
         buildingId: body.buildingId || null,
         floorId: body.floorId || null,
+        gridReference: body.gridReference || null,
         make: body.make || null,
         modelNumber: body.modelNumber || null,
         serialNumber: body.serialNumber || null,
         latitude: body.latitude ? parseFloat(body.latitude) : null,
         longitude: body.longitude ? parseFloat(body.longitude) : null,
+        conditionRating: body.conditionRating || null,
+        criticality: body.criticality || 'medium',
+        operationalStatus: body.operationalStatus || 'operative',
+        completionScore: body.completionScore || 0,
+        status: 'draft',
+        surveyorId: userId || null,
+        surveyedAt: new Date(),
       })
       .returning();
 

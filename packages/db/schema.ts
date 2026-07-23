@@ -53,8 +53,10 @@ export const assetSubcategories = pgTable('asset_subcategories', {
   categoryId: uuid('category_id').references(() => assetCategories.id, { onDelete: 'cascade' }).notNull(),
   code: text('code').notNull(),
   name: text('name').notNull(),
-  curatedMakes: jsonb('curated_makes').$type<string[]>().default([]).notNull(),
-  specSchema: jsonb('spec_schema').default({}).notNull(),
+  // 💡 Explicitly pass the database column name in snake_case:
+  curatedMakes: jsonb('curated_makes').$type<string[]>().default([]),
+  specSchema: jsonb('spec_schema').$type<any[]>().default([]),
+  
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
