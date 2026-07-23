@@ -1,0 +1,334 @@
+{
+  "properties": [
+    {
+      "id": "10000000-0000-0000-0000-000000000001",
+      "name": "Republic of Whitefield",
+      "code": "RW",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": null,
+      "isAnchor": true
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000002",
+      "name": "Technopark",
+      "code": "DTP",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Technopark",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000003",
+      "name": "Technopolis",
+      "code": "TPS",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Technopolis",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000004",
+      "name": "Trinity",
+      "code": "TRN",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Trinity",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000005",
+      "name": "Omega",
+      "code": "OMG",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Omega",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000006",
+      "name": "Chambers",
+      "code": "CHM",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Chambers",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000007",
+      "name": "Point",
+      "code": "PNT",
+      "city": "Bangalore",
+      "wave": 1,
+      "legacyName": "Point",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000008",
+      "name": "Techridge",
+      "code": "TRG",
+      "city": "Hyderabad",
+      "wave": 2,
+      "legacyName": "Techridge",
+      "isAnchor": true
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000009",
+      "name": "Solitaire",
+      "code": "SOL",
+      "city": "Hyderabad",
+      "wave": 2,
+      "legacyName": "Solitaire",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000010",
+      "name": "Towers",
+      "code": "TWR",
+      "city": "Hyderabad",
+      "wave": 2,
+      "legacyName": "Towers",
+      "isAnchor": false
+    },
+    {
+      "id": "10000000-0000-0000-0000-000000000011",
+      "name": "N.R.Enclave",
+      "code": "NRE",
+      "city": "Hyderabad",
+      "wave": 2,
+      "legacyName": "N.R.Enclave",
+      "isAnchor": false
+    }
+  ],
+  "categories": [
+    {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "code": "ELEC",
+      "name": "Electrical"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000002",
+      "code": "HVAC",
+      "name": "HVAC"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000003",
+      "code": "FIRE",
+      "name": "Fire"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000004",
+      "code": "WTP",
+      "name": "WTP"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000005",
+      "code": "STP",
+      "name": "STP"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000006",
+      "code": "MECH",
+      "name": "Mechanical"
+    },
+    {
+      "id": "20000000-0000-0000-0000-000000000007",
+      "code": "MISC",
+      "name": "Misc"
+    }
+  ],
+  "subcategories": [
+    {
+      "id": "30000000-0000-0000-0000-000000000001",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "XFMR",
+      "name": "Transformer",
+      "capacityUnit": "kVA",
+      "legacyCodes": ["Electrical/Transformer", "Electrical/Transformer/OLTC", "Transformer/OLTC"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000002",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "DG",
+      "name": "DG Set",
+      "capacityUnit": "kVA",
+      "legacyCodes": ["Electrical/DG", "Electrical/Generators", "DG/Alternator"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000003",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "LTP",
+      "name": "LT Panel",
+      "capacityUnit": null,
+      "legacyCodes": ["Electrical/LT Panel", "Electrical/Panel", "Panel", "Utility DB Panels"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000004",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "UPS",
+      "name": "UPS",
+      "capacityUnit": "kVA",
+      "legacyCodes": ["Electrical/UPS", "Electrical/UPS Battery"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000005",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "EM",
+      "name": "Energy Meter",
+      "capacityUnit": null,
+      "legacyCodes": ["Electrical/Energy Meter"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000006",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "HTP",
+      "name": "HT Panel",
+      "capacityUnit": null,
+      "legacyCodes": ["Electrical/HT Panel", "Electrical/VCB Breaker", "Electrical/SF 6 Breaker", "Electrical/RMU"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000007",
+      "categoryId": "20000000-0000-0000-0000-000000000001",
+      "code": "LFT",
+      "name": "Lift",
+      "capacityUnit": null,
+      "legacyCodes": ["Electrical/Elevators", "Electrical/Main Lift Panel", "Electrical/Lift Panel"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000008",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "AHU",
+      "name": "AHU",
+      "capacityUnit": "TR",
+      "legacyCodes": ["HVAC/AHU"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000009",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "CHLR",
+      "name": "Chiller",
+      "capacityUnit": "TR",
+      "legacyCodes": ["HVAC/Chillers", "HVAC/Chillers/Cooling Tower"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000010",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "CT",
+      "name": "Cooling Tower",
+      "capacityUnit": null,
+      "legacyCodes": ["HVAC/Chillers/Cooling Tower/Cooling Tower Fan"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000011",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "PMP",
+      "name": "Pump",
+      "capacityUnit": "LPM",
+      "legacyCodes": ["HVAC/Primary Pump", "HVAC/Secondary Pump", "HVAC/Condenser Pump", "HVAC/Makeup Pump"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000012",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "EF",
+      "name": "Exhaust Fan",
+      "capacityUnit": "CFM",
+      "legacyCodes": ["HVAC/Exhaust Fan", "HVAC/Fresh Air Fan"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000013",
+      "categoryId": "20000000-0000-0000-0000-000000000002",
+      "code": "JF",
+      "name": "Jet Fan",
+      "capacityUnit": "CFM",
+      "legacyCodes": ["HVAC/Jet Fan"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000014",
+      "categoryId": "20000000-0000-0000-0000-000000000003",
+      "code": "FE",
+      "name": "Fire Extinguisher",
+      "capacityUnit": null,
+      "legacyCodes": ["Fire/Fire Extinguisher", "Fire/Fire Extinguishers", "Fire/Extinguisher", "Fire/Fire Extinguisher/6 KG/ABC", "Fire/Fire Extinguisher/5 KG/DCP", "Fire/Fire Extinguisher/2 KG/CO2"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000015",
+      "categoryId": "20000000-0000-0000-0000-000000000003",
+      "code": "FH",
+      "name": "Fire Hydrant",
+      "capacityUnit": null,
+      "legacyCodes": ["Fire/Fire Hydrant Cabinet", "Fire/FHC Box", "Fire/Hydrant Point", "Fire/Fire Hydrant Hose Cabinet"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000016",
+      "categoryId": "20000000-0000-0000-0000-000000000003",
+      "code": "FP",
+      "name": "Fire Pump",
+      "capacityUnit": "LPM",
+      "legacyCodes": ["Fire/Hydrant Pump", "Fire/Jockey Pump", "Fire/Sprinkler Pump", "Fire/Booster Pump", "Fire/Diesel Pump", "Fire/Fire Pump"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000017",
+      "categoryId": "20000000-0000-0000-0000-000000000003",
+      "code": "FA",
+      "name": "Fire Alarm",
+      "capacityUnit": null,
+      "legacyCodes": ["Fire/Fire Alarm System", "Fire/FAPA System", "Fire/PA System"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000018",
+      "categoryId": "20000000-0000-0000-0000-000000000004",
+      "code": "WTP_PMP",
+      "name": "Pump",
+      "capacityUnit": "LPM",
+      "legacyCodes": ["WTP/Treated Water Pump", "WTP/Raw Water Motor", "WTP/Storm Water Pump"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000019",
+      "categoryId": "20000000-0000-0000-0000-000000000004",
+      "code": "WTP_FLT",
+      "name": "Filter",
+      "capacityUnit": null,
+      "legacyCodes": ["WTP/Sand Filter", "WTP/Carbon Filter", "WTP/Softener Filter"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000020",
+      "categoryId": "20000000-0000-0000-0000-000000000004",
+      "code": "WTP_TNK",
+      "name": "Tank",
+      "capacityUnit": "m³",
+      "legacyCodes": ["WTP/Tanks", "WTP/Domestic Tank", "WTP/Treated Water Tank"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000021",
+      "categoryId": "20000000-0000-0000-0000-000000000005",
+      "code": "STP_PMP",
+      "name": "Pump",
+      "capacityUnit": "LPM",
+      "legacyCodes": ["STP/Filter Feed Pump", "STP/Sludge Pump", "STP/Garden Pump", "STP/Raw Water Pump"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000022",
+      "categoryId": "20000000-0000-0000-0000-000000000005",
+      "code": "STP_TNK",
+      "name": "Tank",
+      "capacityUnit": "m³",
+      "legacyCodes": ["STP/Tank", "STP/Tanks", "STP/Collection Tank"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000023",
+      "categoryId": "20000000-0000-0000-0000-000000000006",
+      "code": "PRK",
+      "name": "Car Parking",
+      "capacityUnit": null,
+      "legacyCodes": ["Mechanical Car Parking"]
+    },
+    {
+      "id": "30000000-0000-0000-0000-000000000024",
+      "categoryId": "20000000-0000-0000-0000-000000000007",
+      "code": "GEN",
+      "name": "General",
+      "capacityUnit": null,
+      "legacyCodes": ["Misc."]
+    }
+  ]
+}
