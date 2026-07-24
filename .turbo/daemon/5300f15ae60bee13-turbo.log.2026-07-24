@@ -564,3 +564,105 @@
 2026-07-24T10:15:59.628714Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/.expo/types/router.d.ts")}
 2026-07-24T10:15:59.628722Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
 2026-07-24T10:15:59.629850Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2026-07-24T10:18:23.428117Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:18:23.428156Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:18:26.731950Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:18:26.731962Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:18:27.243305Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:18:27.243312Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:18:27.332558Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:18:27.332570Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:18:27.434367Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package-lock.json")}
+2026-07-24T10:18:27.434375Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2026-07-24T10:21:49.627304Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_38149_dc4a881b2ae466ff55b858424093d6d6")}
+2026-07-24T10:21:49.627333Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-24T10:21:52.827565Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1884006976"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2026-07-24T10:21:52.827577Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-24T10:21:53.130976Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.130986Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.233315Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.233322Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.330338Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.330344Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.432048Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.432057Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.531077Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.531086Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.629715Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.629724Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:53.931279Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:53.931290Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.028198Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.028205Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.329796Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.329804Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.429136Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.429148Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.533706Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.533717Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.633583Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.633594Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.735393Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.735400Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:54.830561Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:54.830568Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:55.131055Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:55.131076Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:21:55.330342Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-24T10:21:55.330350Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2026-07-24T10:22:02.327076Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/services/api.ts")}
+2026-07-24T10:22:02.327095Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:25:02.726932Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/upload")}
+2026-07-24T10:25:02.726976Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:25:09.227128Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/upload/route.ts")}
+2026-07-24T10:25:09.227144Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:26:05.427835Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/upload/route.ts")}
+2026-07-24T10:26:05.427853Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:26:05.627493Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/upload/route.ts")}
+2026-07-24T10:26:05.627523Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:29:10.426469Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/app/survey.tsx")}
+2026-07-24T10:29:10.426485Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:29:10.527159Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/app/survey.tsx")}
+2026-07-24T10:29:10.527183Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:29:35.527168Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/.expo/types"), AnchoredSystemPathBuf("apps/mobile/.expo/types/router.d.ts"), AnchoredSystemPathBuf("apps/mobile/.expo"), AnchoredSystemPathBuf("apps/mobile/.expo/README.md"), AnchoredSystemPathBuf("apps/mobile/.expo/devices.json")}
+2026-07-24T10:29:35.527192Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:29:37.226724Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/.expo"), AnchoredSystemPathBuf("apps/mobile/.expo/types"), AnchoredSystemPathBuf("apps/mobile/.expo/devices.json.vyb_NKLFeApNZHaaKXpKgpFd-bj3sQlhc_D7zCBVDm4"), AnchoredSystemPathBuf("apps/mobile/.expo/devices.json"), AnchoredSystemPathBuf("apps/mobile/expo-env.d.ts"), AnchoredSystemPathBuf("apps/mobile/.expo/README.md")}
+2026-07-24T10:29:37.226746Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:29:38.227385Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mobile/.expo/types/router.d.ts")}
+2026-07-24T10:29:38.227405Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/mobile"), path: AnchoredSystemPathBuf("apps/mobile") }}))
+2026-07-24T10:32:25.027867Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/db/schema.ts")}
+2026-07-24T10:32:25.027983Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/db"), path: AnchoredSystemPathBuf("packages/db") }}))
+2026-07-24T10:32:25.226638Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/db/schema.ts")}
+2026-07-24T10:32:25.226652Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/db"), path: AnchoredSystemPathBuf("packages/db") }}))
+2026-07-24T10:37:48.940188Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/assets/route.ts")}
+2026-07-24T10:37:48.940239Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:37:49.137797Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/assets/route.ts")}
+2026-07-24T10:37:49.137808Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:38:22.738717Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/assets/[id]/route.ts")}
+2026-07-24T10:38:22.738737Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:38:22.839325Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/api/assets/[id]/route.ts")}
+2026-07-24T10:38:22.839344Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:48:27.040104Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T10:48:27.040139Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:58:00.970344Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T10:58:00.970402Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T10:58:19.569301Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/components/admin/AdminDashboardView.tsx")}
+2026-07-24T10:58:19.569314Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:00:49.770857Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T11:00:49.770895Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:00:49.970655Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T11:00:49.970667Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:01:11.370380Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T11:01:11.370394Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:01:11.570783Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T11:01:11.570796Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:01:23.069575Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/page.tsx")}
+2026-07-24T11:01:23.069585Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:06:04.271596Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/assets/page.tsx")}
+2026-07-24T11:06:04.271661Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:06:04.471530Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/app/(admin)/assets/page.tsx")}
+2026-07-24T11:06:04.471550Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:06:13.570637Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/components/admin/AssetsView.tsx")}
+2026-07-24T11:06:13.570653Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))
+2026-07-24T11:06:13.771829Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/web/components/admin/AssetsView.tsx")}
+2026-07-24T11:06:13.771842Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@asset-pulse/web"), path: AnchoredSystemPathBuf("apps/web") }}))

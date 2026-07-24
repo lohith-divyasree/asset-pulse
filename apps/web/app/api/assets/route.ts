@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { eq, ilike } from 'drizzle-orm';
-import { db } from '@asset-pulse/db';
+import { NextResponse } from "next/server";
+import { eq, ilike } from "drizzle-orm";
+import { db } from "@asset-pulse/db";
 import {
   assets,
   assetCategories,
@@ -10,7 +10,7 @@ import {
   floors,
   rooms,
   userScopes,
-} from '@asset-pulse/db/schema';
+} from "@asset-pulse/db/schema";
 
 export async function GET() {
   try {
@@ -18,21 +18,21 @@ export async function GET() {
     return NextResponse.json({ success: true, data: allAssets });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch assets' },
-      { status: 500 }
+      { success: false, error: "Failed to fetch assets" },
+      { status: 500 },
     );
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const userId = req.headers.get('x-user-id');
+    const userId = req.headers.get("x-user-id");
     const body = await req.json();
 
     if (!userId) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized: Missing x-user-id header.' },
-        { status: 401 }
+        { success: false, error: "Unauthorized: Missing x-user-id header." },
+        { status: 401 },
       );
     }
 
@@ -58,8 +58,11 @@ export async function POST(req: Request) {
 
     if (!targetPropertyId) {
       return NextResponse.json(
-        { success: false, error: 'No properties found in database. Run db:seed first.' },
-        { status: 400 }
+        {
+          success: false,
+          error: "No properties found in database. Run db:seed first.",
+        },
+        { status: 400 },
       );
     }
 
@@ -79,7 +82,11 @@ export async function POST(req: Request) {
     let actualRoomId = targetRoomId;
 
     if (actualRoomId && (!actualFloorId || !actualBuildingId)) {
-      const [roomRecord] = await db.select().from(rooms).where(eq(rooms.id, actualRoomId)).limit(1);
+      const [roomRecord] = await db
+        .select()
+        .from(rooms)
+        .where(eq(rooms.id, actualRoomId))
+        .limit(1);
       if (roomRecord) {
         actualFloorId = actualFloorId || roomRecord.floorId;
         actualBuildingId = actualBuildingId || roomRecord.buildingId;
@@ -87,7 +94,11 @@ export async function POST(req: Request) {
     }
 
     if (actualFloorId && !actualBuildingId) {
-      const [floorRecord] = await db.select().from(floors).where(eq(floors.id, actualFloorId)).limit(1);
+      const [floorRecord] = await db
+        .select()
+        .from(floors)
+        .where(eq(floors.id, actualFloorId))
+        .limit(1);
       if (floorRecord) {
         actualBuildingId = actualBuildingId || floorRecord.buildingId;
       }
@@ -118,8 +129,12 @@ export async function POST(req: Request) {
 
     if (!hasPermission) {
       return NextResponse.json(
-        { success: false, error: 'Permission denied: You do not have scope access to add assets to this location.' },
-        { status: 403 }
+        {
+          success: false,
+          error:
+            "Permission denied: You do not have scope access to add assets to this location.",
+        },
+        { status: 403 },
       );
     }
 
@@ -141,7 +156,7 @@ export async function POST(req: Request) {
           const generatedCode = `CAT-${catName.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-4)}`;
           [existingCat] = await db
             .insert(assetCategories)
-            .values({ 
+            .values({
               name: catName,
               code: generatedCode,
             })
@@ -200,8 +215,11 @@ export async function POST(req: Request) {
 
     if (!targetCategoryId || !targetSubcategoryId) {
       return NextResponse.json(
-        { success: false, error: 'Failed to assign a valid Category/Subcategory ID.' },
-        { status: 400 }
+        {
+          success: false,
+          error: "Failed to assign a valid Category/Subcategory ID.",
+        },
+        { status: 400 },
       );
     }
 
@@ -218,7 +236,7 @@ export async function POST(req: Request) {
         id: newAssetId,
         assetCode: generatedAssetCode,
         qrCode: qrPayload,
-        assetName: body.assetName || body.name || 'Untitled Asset',
+        assetName: body.assetName || body.name || "Untitled Asset",
         propertyId: targetPropertyId,
         buildingId: actualBuildingId,
         floorId: actualFloorId,
@@ -232,14 +250,20 @@ export async function POST(req: Request) {
         latitude: body.latitude ? parseFloat(String(body.latitude)) : null,
         longitude: body.longitude ? parseFloat(String(body.longitude)) : null,
         conditionRating: body.conditionRating || null,
-        criticality: body.criticality || 'medium',
-        operationalStatus: body.operationalStatus || 'operative',
+        criticality: body.criticality || "medium",
+        operationalStatus: body.operationalStatus || "operative",
         completionScore: body.completionScore || 0,
+        photoUrls: Array.isArray(body.photoUrls) ? body.photoUrls : [], // 👈 Add this line
         specifications: {
           ...(body.specifications || body.specData || {}),
-          ...(body.isManualCategory ? { customCategory: body.customCategory, customSubcategory: body.customSubcategory } : {}),
+          ...(body.isManualCategory
+            ? {
+                customCategory: body.customCategory,
+                customSubcategory: body.customSubcategory,
+              }
+            : {}),
         },
-        status: 'surveyed',
+        status: "surveyed",
         surveyorId: userId,
         surveyedAt: now,
         createdAt: now,
@@ -247,12 +271,15 @@ export async function POST(req: Request) {
       })
       .returning();
 
-    return NextResponse.json({ success: true, data: insertedAsset }, { status: 201 });
-  } catch (error: any) {
-    console.error('❌ Database Insert Failed:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to save asset' },
-      { status: 500 }
+      { success: true, data: insertedAsset },
+      { status: 201 },
+    );
+  } catch (error: any) {
+    console.error("❌ Database Insert Failed:", error);
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to save asset" },
+      { status: 500 },
     );
   }
 }

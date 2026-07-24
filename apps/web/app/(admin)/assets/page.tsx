@@ -1,5 +1,5 @@
-import AssetsView from '@/components/admin/AssetsView';
-import { db } from '@asset-pulse/db';
+import AssetsView from "@/components/admin/AssetsView";
+import { db } from "@asset-pulse/db";
 import {
   assets,
   properties,
@@ -9,8 +9,8 @@ import {
   assetCategories,
   assetSubcategories,
   users,
-} from '@asset-pulse/db/schema';
-import { asc, desc, eq } from 'drizzle-orm';
+} from "@asset-pulse/db/schema";
+import { asc, desc, eq } from "drizzle-orm";
 
 // Ensure fresh database fetches on every request
 export const revalidate = 0;
@@ -35,6 +35,7 @@ async function getAssets() {
         status: assets.status,
         completionScore: assets.completionScore,
         specifications: assets.specifications,
+        photoUrls: assets.photoUrls, // 👈 Selected photoUrls
         createdAt: assets.createdAt,
         surveyedAt: assets.surveyedAt,
 
@@ -64,13 +65,16 @@ async function getAssets() {
       .leftJoin(floors, eq(assets.floorId, floors.id))
       .leftJoin(rooms, eq(assets.roomId, rooms.id))
       .leftJoin(assetCategories, eq(assets.categoryId, assetCategories.id))
-      .leftJoin(assetSubcategories, eq(assets.subcategoryId, assetSubcategories.id))
+      .leftJoin(
+        assetSubcategories,
+        eq(assets.subcategoryId, assetSubcategories.id),
+      )
       .leftJoin(users, eq(assets.surveyorId, users.id))
-      .orderBy(asc(buildings.name), desc(assets.createdAt)); // 👈 Primary: Building Name (A-Z), Secondary: Created Date (Newest first)
+      .orderBy(asc(buildings.name), desc(assets.createdAt));
 
     return assetList;
   } catch (error) {
-    console.error('❌ Failed to fetch assets from database:', error);
+    console.error("❌ Failed to fetch assets from database:", error);
     return [];
   }
 }
