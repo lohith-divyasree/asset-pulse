@@ -131,7 +131,8 @@ export const assets = pgTable('assets', {
   surveyorId: uuid('surveyor_id').references(() => users.id),
   surveyedAt: timestamp('surveyed_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  qrCode: text('qr_code'), // Stores the QR payload URL or identifier string
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
 });
 
 // 5. AUDIT LOGS

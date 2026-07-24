@@ -20,7 +20,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // 1. Fetch all scopes assigned to this user
+    // 1. Fetch user scopes assigned explicitly
     const scopes = await db
       .select()
       .from(userScopes)
@@ -30,68 +30,104 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, data: [] });
     }
 
-    // Create precise lookup sets for each level based on user_scopes rows
-    const assignedPropertyIds = new Set(scopes.map((s) => s.propertyId));
-    const assignedBuildingIds = new Set(scopes.map((s) => s.buildingId).filter(Boolean));
-    const assignedFloorIds = new Set(scopes.map((s) => s.floorId).filter(Boolean));
-    const assignedRoomIds = new Set(scopes.map((s) => s.roomId).filter(Boolean));
+    // Extract exact explicit level assignments
+    // Note: If scope has buildingId = NULL, it's a PROPERTY-level scope.
+    const explicitPropertyIds = new Set(
+      scopes.filter((s) => !s.buildingId && !s.floorId && !s.roomId).map((s) => s.propertyId)
+    );
+    const explicitBuildingIds = new Set(
+      scopes.filter((s) => s.buildingId && !s.floorId && !s.roomId).map((s) => s.buildingId!)
+    );
+    const explicitFloorIds = new Set(
+      scopes.filter((s) => s.floorId && !s.roomId).map((s) => s.floorId!)
+    );
+    const explicitRoomIds = new Set(
+      scopes.filter((s) => s.roomId).map((s) => s.roomId!)
+    );
 
-    // 2. Fetch all necessary hierarchy tables
+    // Also track all property/building/floor IDs present anywhere in user_scopes for tree visibility checks
+    const targetPropertyIds = new Set(scopes.map((s) => s.propertyId));
+    const targetBuildingIds = new Set(scopes.map((s) => s.buildingId).filter(Boolean) as string[]);
+    const targetFloorIds = new Set(scopes.map((s) => s.floorId).filter(Boolean) as string[]);
+
+    // 2. Query spatial hierarchy records
     const propertyRecords = await db.select().from(properties);
     const allBuildings = await db.select().from(buildings);
     const allFloors = await db.select().from(floors);
     const allRooms = await db.select().from(rooms);
 
-    // 3. Construct hierarchical response with explicit `isAssigned` flags
+    // 3. Construct spatial tree with cascading permissions & structural visibility
     const result = propertyRecords
-      .filter((p) => assignedPropertyIds.has(p.id) || allBuildings.some((b) => b.propertyId === p.id && (assignedBuildingIds.has(b.id) || allFloors.some((f) => f.buildingId === b.id && assignedFloorIds.has(f.id)))))
+      .filter((property) => {
+        // Show property if it is explicitly scoped or if any child building/floor/room belongs to it
+        return (
+          explicitPropertyIds.has(property.id) ||
+          targetPropertyIds.has(property.id) ||
+          allBuildings.some((b) => b.propertyId === property.id && targetBuildingIds.has(b.id))
+        );
+      })
       .map((property) => {
-        const isPropertyAssigned = assignedPropertyIds.has(property.id);
+        const isPropertyExplicit = explicitPropertyIds.has(property.id);
 
         const propertyBuildings = allBuildings
           .filter((b) => b.propertyId === property.id)
           .map((building) => {
-            const isBuildingAssigned = assignedBuildingIds.has(building.id);
+            const isBuildingExplicit = explicitBuildingIds.has(building.id);
+            // Permitted if explicitly assigned to this building or inherited from parent property
+            const isBuildingPermitted = isPropertyExplicit || isBuildingExplicit;
 
             const buildingFloors = allFloors
               .filter((f) => f.buildingId === building.id)
               .map((floor) => {
-                const isFloorAssigned = assignedFloorIds.has(floor.id);
+                const isFloorExplicit = explicitFloorIds.has(floor.id);
+                // Permitted if inherited from building or explicitly assigned to this floor
+                const isFloorPermitted = isBuildingPermitted || isFloorExplicit;
 
                 const floorRooms = allRooms
                   .filter((r) => r.floorId === floor.id)
-                  .map((room) => ({
-                    ...room,
-                    isAssigned: isPropertyAssigned || isBuildingAssigned || isFloorAssigned || assignedRoomIds.has(room.id),
-                  }))
-                  .filter((r) => isPropertyAssigned || isBuildingAssigned || isFloorAssigned || assignedRoomIds.has(r.id));
+                  .map((room) => {
+                    const isRoomExplicit = explicitRoomIds.has(room.id);
+                    // Permitted if inherited from floor or explicitly assigned to this room
+                    const isRoomPermitted = isFloorPermitted || isRoomExplicit;
+
+                    return {
+                      ...room,
+                      isExplicitlyAssigned: isRoomExplicit,
+                      isPermitted: isRoomPermitted,
+                    };
+                  })
+                  .filter((r) => r.isPermitted || targetFloorIds.has(r.floorId));
 
                 return {
                   ...floor,
-                  isAssigned: isPropertyAssigned || isBuildingAssigned || isFloorAssigned,
+                  isExplicitlyAssigned: isFloorExplicit,
+                  isPermitted: isFloorPermitted,
                   rooms: floorRooms,
                 };
               })
-              .filter((f) => isPropertyAssigned || isBuildingAssigned || f.isAssigned || f.rooms.length > 0);
+              .filter((f) => f.isPermitted || f.rooms.length > 0);
 
             return {
               ...building,
-              isAssigned: isPropertyAssigned || isBuildingAssigned,
+              isExplicitlyAssigned: isBuildingExplicit,
+              isPermitted: isBuildingPermitted,
               floors: buildingFloors,
             };
           })
-          .filter((b) => isPropertyAssigned || b.isAssigned || b.floors.length > 0);
+          .filter((b) => b.isPermitted || b.floors.length > 0);
 
         return {
           ...property,
-          isAssigned: isPropertyAssigned,
+          isExplicitlyAssigned: isPropertyExplicit,
+          isPermitted: isPropertyExplicit,
           buildings: propertyBuildings,
         };
-      });
+      })
+      .filter((p) => p.isPermitted || p.buildings.length > 0);
 
     return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
-    console.error('❌ Failed to fetch user scopes:', error);
+    console.error('❌ Failed to compute user scopes:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Internal Server Error' },
       { status: 500 }

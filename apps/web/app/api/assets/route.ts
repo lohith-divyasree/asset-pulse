@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1.1 Scope Permission Validation (Granular & Bottom-Up Aware)
+    // 1.1 Scope Permission Validation & Spatial Resolution
     const scopes = await db
       .select()
       .from(userScopes)
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     const targetFloorId = body.floorId || null;
     const targetRoomId = body.roomId || null;
 
-    // Automatically resolve parent hierarchy if only a child is provided
+    // Resolve parent hierarchy up if lower-level targets were selected
     let actualBuildingId = targetBuildingId;
     let actualFloorId = targetFloorId;
     let actualRoomId = targetRoomId;
@@ -82,6 +82,7 @@ export async function POST(req: Request) {
       const [roomRecord] = await db.select().from(rooms).where(eq(rooms.id, actualRoomId)).limit(1);
       if (roomRecord) {
         actualFloorId = actualFloorId || roomRecord.floorId;
+        actualBuildingId = actualBuildingId || roomRecord.buildingId;
       }
     }
 
@@ -96,22 +97,22 @@ export async function POST(req: Request) {
       // Property must match
       if (scope.propertyId !== targetPropertyId) return false;
 
-      // If scope specifies a exact room, it must match
+      // Exact room scope match
       if (scope.roomId) {
         return scope.roomId === actualRoomId;
       }
 
-      // If scope specifies a floor (e.g., Floor 7), allow the floor and any rooms inside it
+      // Floor level scope match
       if (scope.floorId) {
         return scope.floorId === actualFloorId;
       }
 
-      // If scope specifies a building, allow the building and anything inside it
+      // Building level scope match
       if (scope.buildingId) {
         return scope.buildingId === actualBuildingId;
       }
 
-      // If scope is broad property-level access only, everything inside is allowed
+      // Property-wide broad scope
       return true;
     });
 
@@ -122,40 +123,49 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Category & Subcategory Logic (Manual Overrides & Fallbacks)
+    // 2. Category & Subcategory Logic (Manual Overrides & Code Generation)
     let targetCategoryId = body.categoryId;
     let targetSubcategoryId = body.subcategoryId;
 
     if (body.isManualCategory) {
-      // Handle Manual Category/Subcategory Creation
+      // Handle Custom Category
       if (body.customCategory) {
+        const catName = body.customCategory.trim();
         let [existingCat] = await db
           .select()
           .from(assetCategories)
-          .where(ilike(assetCategories.name, body.customCategory.trim()))
+          .where(ilike(assetCategories.name, catName))
           .limit(1);
 
         if (!existingCat) {
+          const generatedCode = `CAT-${catName.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-4)}`;
           [existingCat] = await db
             .insert(assetCategories)
-            .values({ name: body.customCategory.trim() })
+            .values({ 
+              name: catName,
+              code: generatedCode,
+            })
             .returning();
         }
         targetCategoryId = existingCat.id;
       }
 
+      // Handle Custom Subcategory
       if (body.customSubcategory && targetCategoryId) {
+        const subName = body.customSubcategory.trim();
         let [existingSub] = await db
           .select()
           .from(assetSubcategories)
-          .where(ilike(assetSubcategories.name, body.customSubcategory.trim()))
+          .where(ilike(assetSubcategories.name, subName))
           .limit(1);
 
         if (!existingSub) {
+          const generatedCode = `SUB-${subName.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-4)}`;
           [existingSub] = await db
             .insert(assetSubcategories)
             .values({
-              name: body.customSubcategory.trim(),
+              name: subName,
+              code: generatedCode,
               categoryId: targetCategoryId,
             })
             .returning();
@@ -164,7 +174,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Fallbacks if IDs are still missing
+    // Fallbacks if IDs are missing
     if (!targetSubcategoryId) {
       const [defaultSub] = await db.select().from(assetSubcategories).limit(1);
       targetSubcategoryId = defaultSub?.id;
@@ -195,30 +205,45 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Insert into Neon Postgres
+    // 3. Pre-generate IDs, Asset Code, QR Code Payload & Timestamps
+    const newAssetId = crypto.randomUUID();
+    const generatedAssetCode = `AST-${Date.now().toString(36).toUpperCase()}`;
+    const qrPayload = `assetpulse://asset/${newAssetId}`;
+    const now = new Date();
+
+    // 4. Single Database Insert into Neon Postgres
     const [insertedAsset] = await db
       .insert(assets)
       .values({
+        id: newAssetId,
+        assetCode: generatedAssetCode,
+        qrCode: qrPayload,
         assetName: body.assetName || body.name || 'Untitled Asset',
         propertyId: targetPropertyId,
+        buildingId: actualBuildingId,
+        floorId: actualFloorId,
+        roomId: actualRoomId,
         categoryId: targetCategoryId,
         subcategoryId: targetSubcategoryId,
-        buildingId: targetBuildingId,
-        floorId: targetFloorId,
-        roomId: targetRoomId,
         gridReference: body.gridReference || null,
         make: body.make || null,
         modelNumber: body.modelNumber || null,
         serialNumber: body.serialNumber || null,
-        latitude: body.latitude ? parseFloat(body.latitude) : null,
-        longitude: body.longitude ? parseFloat(body.longitude) : null,
+        latitude: body.latitude ? parseFloat(String(body.latitude)) : null,
+        longitude: body.longitude ? parseFloat(String(body.longitude)) : null,
         conditionRating: body.conditionRating || null,
         criticality: body.criticality || 'medium',
         operationalStatus: body.operationalStatus || 'operative',
         completionScore: body.completionScore || 0,
-        status: 'draft',
-        surveyorId: userId || null,
-        surveyedAt: new Date(),
+        specifications: {
+          ...(body.specifications || body.specData || {}),
+          ...(body.isManualCategory ? { customCategory: body.customCategory, customSubcategory: body.customSubcategory } : {}),
+        },
+        status: 'surveyed',
+        surveyorId: userId,
+        surveyedAt: now,
+        createdAt: now,
+        updatedAt: now,
       })
       .returning();
 
