@@ -32,6 +32,20 @@ export default function AuditScreen() {
     fetchAssetAndUser();
   }, [qrPayload]);
 
+  const handleInvalidQR = (message?: string) => {
+    Alert.alert(
+      "Asset Not Found",
+      message || "No asset matching this QR code was found.",
+      [
+        {
+          text: "Scan Again",
+          onPress: () => router.replace("/scan"),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
   const fetchAssetAndUser = async () => {
     try {
       const user = await getUserSession();
@@ -40,6 +54,11 @@ export default function AuditScreen() {
         return;
       }
       setUserId(user.id);
+
+      if (!qrPayload) {
+        handleInvalidQR("No QR code parameter provided.");
+        return;
+      }
 
       // Fetch asset details using the scanned payload
       const res = await fetch(`${API_BASE_URL}/api/assets/${qrPayload}`, {
@@ -53,12 +72,14 @@ export default function AuditScreen() {
           setConditionRating(String(json.data.conditionRating) as any);
         }
       } else {
-        Alert.alert("Not Found", "No asset matching this QR code was found.", [
-          { text: "OK", onPress: () => router.back() },
-        ]);
+        handleInvalidQR(
+          json.error || "No asset matching this QR code was found.",
+        );
       }
     } catch (err) {
-      Alert.alert("Error", "Unable to fetch asset details.");
+      handleInvalidQR(
+        "Unable to fetch asset details due to network connection.",
+      );
     } finally {
       setLoading(false);
     }
@@ -107,6 +128,11 @@ export default function AuditScreen() {
         </Text>
       </View>
     );
+  }
+
+  // Prevents rendering an empty screen while the Alert is active
+  if (!asset) {
+    return null;
   }
 
   return (
