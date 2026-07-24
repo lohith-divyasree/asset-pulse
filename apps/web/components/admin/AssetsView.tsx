@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
 
 interface Asset {
   id: string;
@@ -48,16 +49,15 @@ interface AssetsViewProps {
 
 export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedQrAsset, setSelectedQrAsset] = useState<Asset | null>(null);
 
   const filteredAssets = initialAssets.filter((asset) => {
     const term = searchTerm.toLowerCase();
 
-    // 1. Resolve Asset Identity
     const displayName = asset.assetName || asset.name || "";
     const displayCode = asset.assetCode || asset.code || "";
     const displayCategory = asset.categoryName || asset.category || "";
 
-    // 2. Resolve Spatial Names
     const displayProperty =
       asset.propertyName || asset.room?.floor?.building?.property?.name || "";
     const displayCity =
@@ -67,25 +67,15 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
     const displayFloor = asset.floorName || asset.room?.floor?.name || "";
     const displayRoom = asset.roomName || asset.room?.name || "";
 
-    // 3. Safe Keyword Matching
-    const nameMatch = displayName.toLowerCase().includes(term);
-    const codeMatch = displayCode.toLowerCase().includes(term);
-    const categoryMatch = displayCategory.toLowerCase().includes(term);
-    const propertyMatch =
-      displayProperty.toLowerCase().includes(term) ||
-      displayCity.toLowerCase().includes(term);
-    const buildingMatch = displayBuilding.toLowerCase().includes(term);
-    const floorMatch = displayFloor.toLowerCase().includes(term);
-    const roomMatch = displayRoom.toLowerCase().includes(term);
-
     return (
-      nameMatch ||
-      codeMatch ||
-      categoryMatch ||
-      propertyMatch ||
-      buildingMatch ||
-      floorMatch ||
-      roomMatch
+      displayName.toLowerCase().includes(term) ||
+      displayCode.toLowerCase().includes(term) ||
+      displayCategory.toLowerCase().includes(term) ||
+      displayProperty.toLowerCase().includes(term) ||
+      displayCity.toLowerCase().includes(term) ||
+      displayBuilding.toLowerCase().includes(term) ||
+      displayFloor.toLowerCase().includes(term) ||
+      displayRoom.toLowerCase().includes(term)
     );
   });
 
@@ -130,7 +120,7 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <input
             type="text"
-            placeholder="Search assets, rooms, buildings..."
+            placeholder="Search assets, rooms, codes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -187,6 +177,7 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
           >
             <tr>
               <th style={{ padding: "0.75rem 1rem" }}>Asset Code & Name</th>
+              <th style={{ padding: "0.75rem 1rem" }}>QR Tag</th>
               <th style={{ padding: "0.75rem 1rem" }}>Category</th>
               <th style={{ padding: "0.75rem 1rem" }}>Property</th>
               <th style={{ padding: "0.75rem 1rem" }}>Building</th>
@@ -198,10 +189,9 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
           <tbody>
             {filteredAssets.length > 0 ? (
               filteredAssets.map((asset) => {
-                // Resolved spatial display values
                 const displayName =
                   asset.assetName || asset.name || "Untitled Asset";
-                const displayCode = asset.assetCode || asset.code || "NO-CODE";
+                const displayCode = asset.assetCode || asset.code || asset.id;
                 const displayCategory =
                   asset.categoryName || asset.category || "Uncategorized";
 
@@ -219,6 +209,9 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
                   ? asset.photoUrls
                   : [];
 
+                // Standard Web Scan Deep Link Target URL
+                const scanUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/scan/${displayCode}`;
+
                 return (
                   <tr
                     key={asset.id}
@@ -228,10 +221,46 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
                       <div style={{ fontWeight: "600", color: "#0f172a" }}>
                         {displayName}
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "#0284c7",
+                          fontFamily: "monospace",
+                          fontWeight: "bold",
+                        }}
+                      >
                         {displayCode}
                       </div>
                     </td>
+
+                    {/* 🔲 QR Code Column */}
+                    <td style={{ padding: "0.75rem 1rem" }}>
+                      <button
+                        onClick={() => setSelectedQrAsset(asset)}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.35rem 0.6rem",
+                          borderRadius: "6px",
+                          border: "1px solid #cbd5e1",
+                          backgroundColor: "#f8fafc",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <QRCodeSVG value={scanUrl} size={36} />
+                        <span
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "#0284c7",
+                            fontWeight: "600",
+                          }}
+                        >
+                          View Label
+                        </span>
+                      </button>
+                    </td>
+
                     <td style={{ padding: "0.75rem 1rem", color: "#475569" }}>
                       {displayCategory}
                     </td>
@@ -331,7 +360,7 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
             ) : (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   style={{
                     padding: "2rem",
                     textAlign: "center",
@@ -345,6 +374,107 @@ export default function AssetsView({ initialAssets = [] }: AssetsViewProps) {
           </tbody>
         </table>
       </div>
+
+      {/* 🔲 QR Code Preview Modal */}
+      {selectedQrAsset && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.6)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "2rem",
+              borderRadius: "16px",
+              maxWidth: "400px",
+              width: "100%",
+              textAlign: "center",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: "bold",
+                color: "#0f172a",
+                marginBottom: "0.25rem",
+              }}
+            >
+              {selectedQrAsset.assetName || selectedQrAsset.name}
+            </h3>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "#0284c7",
+                fontWeight: "bold",
+                fontFamily: "monospace",
+                marginBottom: "1.5rem",
+              }}
+            >
+              {selectedQrAsset.assetCode || selectedQrAsset.code}
+            </p>
+
+            <div
+              style={{
+                display: "inline-block",
+                padding: "1rem",
+                backgroundColor: "#fff",
+                border: "2px solid #e2e8f0",
+                borderRadius: "12px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <QRCodeSVG
+                value={`${typeof window !== "undefined" ? window.location.origin : ""}/scan/${selectedQrAsset.assetCode || selectedQrAsset.code}`}
+                size={200}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <button
+                onClick={() => window.print()}
+                style={{
+                  flex: 1,
+                  padding: "0.625rem",
+                  backgroundColor: "#0284c7",
+                  color: "#fff",
+                  fontWeight: "600",
+                  borderRadius: "8px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "0.875rem",
+                }}
+              >
+                🖨️ Print Tag
+              </button>
+              <button
+                onClick={() => setSelectedQrAsset(null)}
+                style={{
+                  flex: 1,
+                  padding: "0.625rem",
+                  backgroundColor: "#f1f5f9",
+                  color: "#334155",
+                  fontWeight: "600",
+                  borderRadius: "8px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "0.875rem",
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
