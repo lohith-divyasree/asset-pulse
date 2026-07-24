@@ -6,6 +6,10 @@ import {
   assetCategories,
   assetSubcategories,
   properties,
+  buildings,
+  floors,
+  rooms,
+  userScopes,
 } from '@asset-pulse/db/schema';
 
 export async function GET() {
@@ -24,6 +28,13 @@ export async function POST(req: Request) {
   try {
     const userId = req.headers.get('x-user-id');
     const body = await req.json();
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Missing x-user-id header.' },
+        { status: 401 }
+      );
+    }
 
     // 1. Property Verification & Fallback
     let targetPropertyId = body.propertyId;
@@ -49,6 +60,65 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { success: false, error: 'No properties found in database. Run db:seed first.' },
         { status: 400 }
+      );
+    }
+
+    // 1.1 Scope Permission Validation (Granular & Bottom-Up Aware)
+    const scopes = await db
+      .select()
+      .from(userScopes)
+      .where(eq(userScopes.userId, userId));
+
+    const targetBuildingId = body.buildingId || null;
+    const targetFloorId = body.floorId || null;
+    const targetRoomId = body.roomId || null;
+
+    // Automatically resolve parent hierarchy if only a child is provided
+    let actualBuildingId = targetBuildingId;
+    let actualFloorId = targetFloorId;
+    let actualRoomId = targetRoomId;
+
+    if (actualRoomId && (!actualFloorId || !actualBuildingId)) {
+      const [roomRecord] = await db.select().from(rooms).where(eq(rooms.id, actualRoomId)).limit(1);
+      if (roomRecord) {
+        actualFloorId = actualFloorId || roomRecord.floorId;
+      }
+    }
+
+    if (actualFloorId && !actualBuildingId) {
+      const [floorRecord] = await db.select().from(floors).where(eq(floors.id, actualFloorId)).limit(1);
+      if (floorRecord) {
+        actualBuildingId = actualBuildingId || floorRecord.buildingId;
+      }
+    }
+
+    const hasPermission = scopes.some((scope) => {
+      // Property must match
+      if (scope.propertyId !== targetPropertyId) return false;
+
+      // If scope specifies a exact room, it must match
+      if (scope.roomId) {
+        return scope.roomId === actualRoomId;
+      }
+
+      // If scope specifies a floor (e.g., Floor 7), allow the floor and any rooms inside it
+      if (scope.floorId) {
+        return scope.floorId === actualFloorId;
+      }
+
+      // If scope specifies a building, allow the building and anything inside it
+      if (scope.buildingId) {
+        return scope.buildingId === actualBuildingId;
+      }
+
+      // If scope is broad property-level access only, everything inside is allowed
+      return true;
+    });
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        { success: false, error: 'Permission denied: You do not have scope access to add assets to this location.' },
+        { status: 403 }
       );
     }
 
@@ -133,8 +203,9 @@ export async function POST(req: Request) {
         propertyId: targetPropertyId,
         categoryId: targetCategoryId,
         subcategoryId: targetSubcategoryId,
-        buildingId: body.buildingId || null,
-        floorId: body.floorId || null,
+        buildingId: targetBuildingId,
+        floorId: targetFloorId,
+        roomId: targetRoomId,
         gridReference: body.gridReference || null,
         make: body.make || null,
         modelNumber: body.modelNumber || null,

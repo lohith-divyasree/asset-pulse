@@ -1,28 +1,37 @@
 import { NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, or, isNull } from 'drizzle-orm';
 import { db } from '@asset-pulse/db';
-import { users, userScopes, properties } from '@asset-pulse/db/schema';
+import { users, userScopes, properties, buildings, floors, rooms } from '@asset-pulse/db/schema';
 
-// GET /api/admin/users - Fetch users along with assigned properties
+// GET /api/admin/users - Fetch users along with assigned hierarchical scopes
 export async function GET() {
   try {
     const allUsers = await db.select().from(users);
 
-    // Fetch all scopes with joined property names
+    // Fetch all scopes with joined names for properties, buildings, floors, and rooms
     const allScopes = await db
       .select({
         id: userScopes.id,
         userId: userScopes.userId,
         propertyId: userScopes.propertyId,
+        buildingId: userScopes.buildingId,
+        floorId: userScopes.floorId,
+        roomId: userScopes.roomId,
         propertyName: properties.name,
+        buildingName: buildings.name,
+        floorName: floors.name,
+        roomName: rooms.name,
       })
       .from(userScopes)
-      .innerJoin(properties, eq(userScopes.propertyId, properties.id));
+      .leftJoin(properties, eq(userScopes.propertyId, properties.id))
+      .leftJoin(buildings, eq(userScopes.buildingId, buildings.id))
+      .leftJoin(floors, eq(userScopes.floorId, floors.id))
+      .leftJoin(rooms, eq(userScopes.roomId, rooms.id));
 
-    // Map properties onto their respective users
+    // Map scopes onto their respective users
     const formattedUsers = allUsers.map((user) => ({
       ...user,
-      passwordHash: undefined, // Hide password hashes
+      passwordHash: undefined,
       scopes: allScopes.filter((scope) => scope.userId === user.id),
     }));
 
@@ -32,9 +41,9 @@ export async function GET() {
   }
 }
 
-// Helper to generate a random 6-character OTP (e.g., "AP-8F3K")
+// Helper to generate a random 6-character OTP
 function generateOTP() {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // Exclude confusing chars (0, O, 1, I)
+  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   let code = '';
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -45,7 +54,7 @@ function generateOTP() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, role, propertyIds } = body;
+    const { name, email, role, scopes } = body;
 
     if (!name || !email) {
       return NextResponse.json({ success: false, error: 'Name and email are required' }, { status: 400 });
@@ -65,11 +74,14 @@ export async function POST(req: Request) {
       })
       .returning();
 
-    // 2. Assign Property Scopes
-    if (Array.isArray(propertyIds) && propertyIds.length > 0) {
-      const scopeEntries = propertyIds.map((propId: string) => ({
+    // 2. Assign Granular Scopes
+    if (Array.isArray(scopes) && scopes.length > 0) {
+      const scopeEntries = scopes.map((scope: any) => ({
         userId: newUser.id,
-        propertyId: propId,
+        propertyId: scope.propertyId || null,
+        buildingId: scope.buildingId || null,
+        floorId: scope.floorId || null,
+        roomId: scope.roomId || null,
         canRegister: true,
         canAudit: true,
       }));
@@ -79,34 +91,37 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       data: newUser,
-      oneTimeCode: tempCode, // Return code to show in Admin UI
+      oneTimeCode: tempCode,
     }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
-// PUT /api/admin/users - Update user assigned property scopes (HTTP driver friendly)
+// PUT /api/admin/users - Update user assigned hierarchical scopes
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { userId, propertyIds } = body;
+    const { userId, scopes } = body;
 
-    if (!userId || !Array.isArray(propertyIds)) {
+    if (!userId || !Array.isArray(scopes)) {
       return NextResponse.json(
-        { success: false, error: 'User ID and property IDs array are required.' },
+        { success: false, error: 'User ID and scopes array are required.' },
         { status: 400 }
       );
     }
 
-    // 1. Clear existing assigned property scopes for the user directly on `db`
+    // 1. Clear existing assigned scopes for the user
     await db.delete(userScopes).where(eq(userScopes.userId, userId));
 
-    // 2. Insert new property scopes if array is not empty
-    if (propertyIds.length > 0) {
-      const scopeEntries = propertyIds.map((propId: string) => ({
+    // 2. Insert new granular scopes if array is not empty
+    if (scopes.length > 0) {
+      const scopeEntries = scopes.map((scope: any) => ({
         userId,
-        propertyId: propId,
+        propertyId: scope.propertyId || null,
+        buildingId: scope.buildingId || null,
+        floorId: scope.floorId || null,
+        roomId: scope.roomId || null,
         canRegister: true,
         canAudit: true,
       }));
@@ -115,7 +130,7 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'User property scopes updated successfully.',
+      message: 'User location scopes updated successfully.',
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -124,7 +139,7 @@ export async function PUT(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { userId, action } = await req.json(); // action: 'deactivate' | 'reactivate'
+    const { userId, action } = await req.json();
 
     if (!userId || !action) {
       return NextResponse.json(
@@ -138,7 +153,7 @@ export async function PATCH(req: Request) {
         .update(users)
         .set({
           isActive: false,
-          oneTimeCode: null, // Clear active credentials
+          oneTimeCode: null,
         })
         .where(eq(users.id, userId));
 
@@ -156,7 +171,7 @@ export async function PATCH(req: Request) {
         .set({
           isActive: true,
           oneTimeCode: newTempCode,
-          isMustChangePassword: true, // Force password reset on next mobile login
+          isMustChangePassword: true,
         })
         .where(eq(users.id, userId));
 

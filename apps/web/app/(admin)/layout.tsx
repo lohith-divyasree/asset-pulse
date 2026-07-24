@@ -6,16 +6,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen flex bg-slate-50">
       <aside className="w-64 bg-slate-900 text-slate-100 p-6 flex flex-col gap-6">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white">AssetPulse Admin</h2>
+          <Link href="/" className="text-xl font-bold tracking-tight text-white hover:opacity-80 transition">
+            AssetPulse Admin
+          </Link>
           <p className="text-xs text-slate-400">System Management</p>
         </div>
 
         <nav className="flex flex-col gap-2 font-medium text-sm">
           <Link
+            href="/"
+            className="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
+          >
+            📊 Dashboard
+          </Link>
+          <Link
             href="/properties"
             className="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
           >
             🏢 Properties
+          </Link>
+          <Link
+            href="/assets"
+            className="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
+          >
+            📦 Assets
           </Link>
           <Link
             href="/users"

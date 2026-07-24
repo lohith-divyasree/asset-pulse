@@ -11,11 +11,11 @@
     },
     {
       "id": "10000000-0000-0000-0000-000000000002",
-      "name": "Technopark",
-      "code": "DTP",
+      "name": "Divyasree Chambers",
+      "code": "DSC",
       "city": "Bangalore",
       "wave": 1,
-      "legacyName": "Technopark",
+      "legacyName": "Divyasree Chambers",
       "isAnchor": false
     },
     {
@@ -98,6 +98,64 @@
       "wave": 2,
       "legacyName": "N.R.Enclave",
       "isAnchor": false
+    }
+  ],
+  "buildings": [
+    {
+      "id": "40000000-0000-0000-0000-000000000001",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "code": "TWR-A",
+      "name": "Tower A"
+    },
+    {
+      "id": "40000000-0000-0000-0000-000000000002",
+      "propertyId": "10000000-0000-0000-0000-000000000001",
+      "code": "BLK-1",
+      "name": "Block 1"
+    }
+  ],
+  "floors": [
+    {
+      "id": "50000000-0000-0000-0000-000000000001",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "buildingId": "40000000-0000-0000-0000-000000000001",
+      "name": "Floor 7",
+      "level": 7,
+      "legacyPath": "Divyasree Chambers/Tower A/Floor 7"
+    },
+    {
+      "id": "50000000-0000-0000-0000-000000000002",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "buildingId": "40000000-0000-0000-0000-000000000001",
+      "name": "Floor 8",
+      "level": 8,
+      "legacyPath": "Divyasree Chambers/Tower A/Floor 8"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "60000000-0000-0000-0000-000000000001",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "buildingId": "40000000-0000-0000-0000-000000000001",
+      "floorId": "50000000-0000-0000-0000-000000000001",
+      "code": "F7-RM1",
+      "name": "Electrical Room"
+    },
+    {
+      "id": "60000000-0000-0000-0000-000000000002",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "buildingId": "40000000-0000-0000-0000-000000000001",
+      "floorId": "50000000-0000-0000-0000-000000000001",
+      "code": "F7-RM2",
+      "name": "AHU Room"
+    },
+    {
+      "id": "60000000-0000-0000-0000-000000000003",
+      "propertyId": "10000000-0000-0000-0000-000000000002",
+      "buildingId": "40000000-0000-0000-0000-000000000001",
+      "floorId": "50000000-0000-0000-0000-000000000002",
+      "code": "F8-RM1",
+      "name": "Server Room"
     }
   ],
   "categories": [
@@ -390,7 +448,7 @@
     },
     {
       "id": "30000000-0000-0000-0000-000000000023",
-      "categoryId": "20000000-0000-0000-0000-000000000006",
+      "categoryId": "20000000-0000-0000-0000-000000000007",
       "code": "PRK",
       "name": "Car Parking",
       "curatedMakes": ["Klaus Multiparking", "Wöhr", "RR Parkon"],

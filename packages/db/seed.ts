@@ -1,12 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import { db } from './index';
-import { assetCategories, assetSubcategories, properties, assets } from './schema';
+import { assetCategories, assetSubcategories, properties, buildings, floors, rooms, assets } from './schema';
 
 interface SeedData {
   properties: any[];
   categories: any[];
   subcategories: any[];
+  buildings: any[];
+  floors: any[];
+  rooms: any[];
 }
 
 async function runSeed() {
@@ -27,6 +30,9 @@ async function runSeed() {
     await db.delete(assetSubcategories);
     await db.delete(assetCategories);
     await db.delete(properties);
+    await db.delete(buildings);
+    await db.delete(floors);
+    await db.delete(rooms);
     console.log('   ✓ Tables cleared cleanly.\n');
 
     if (data.properties?.length) {
@@ -39,6 +45,24 @@ async function runSeed() {
       console.log(`📦 Ingesting ${data.categories.length} categories...`);
       await db.insert(assetCategories).values(data.categories).onConflictDoNothing();
       console.log('   ✓ Categories seeded successfully.');
+    }
+
+    if (data.buildings?.length) {
+      console.log(`🏗️ Ingesting ${data.buildings.length} buildings...`);
+      await db.insert(buildings).values(data.buildings).onConflictDoNothing();
+      console.log('   ✓ Buildings seeded successfully.');
+    }
+
+    if (data.floors?.length) {
+      console.log(`🏢 Ingesting ${data.floors.length} floors...`);
+      await db.insert(floors).values(data.floors).onConflictDoNothing();
+      console.log('   ✓ Floors seeded successfully.');
+    }
+
+    if (data.rooms?.length) {
+      console.log(`🚪 Ingesting ${data.rooms.length} rooms...`);
+      await db.insert(rooms).values(data.rooms).onConflictDoNothing();
+      console.log('   ✓ Rooms seeded successfully.');
     }
 
     if (data.subcategories?.length) {

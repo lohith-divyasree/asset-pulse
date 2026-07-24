@@ -6,35 +6,28 @@
   - Environments: .env
 
  [37m[1m [22m[39m Creating an optimized production build ...
- [32m[1m✓[22m[39m Compiled successfully
-[?25l [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G[?25h [37m[1m [22m[39m Linting and checking validity of types     [32m[1m✓[22m[39m Linting and checking validity of types 
-[?25l [37m[1m [22m[39m Collecting page data  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting page data  [36m..[39mThe `fetchConnectionCache` option is deprecated (now always `true`)
-The `fetchConnectionCache` option is deprecated (now always `true`)
-The `fetchConnectionCache` option is deprecated (now always `true`)
-The `fetchConnectionCache` option is deprecated (now always `true`)
-The `fetchConnectionCache` option is deprecated (now always `true`)
-[2K[1G[?25h [37m[1m [22m[39m Collecting page data     [32m[1m✓[22m[39m Collecting page data 
-[?25l [37m[1m [22m[39m Generating static pages (0/10)  [36m[    ][39mThe `fetchConnectionCache` option is deprecated (now always `true`)
-[2K[1G[?25h [32m[1m✓[22m[39m Generating static pages (10/10)
-[?25l [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[?25l [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G[?25h [37m[1m [22m[39m Collecting build traces     [32m[1m✓[22m[39m Collecting build traces 
-[2K[1G[?25h [37m[1m [22m[39m Finalizing page optimization     [32m[1m✓[22m[39m Finalizing page optimization 
+Failed to compile.
 
-[4mRoute (app)[24m                              [4mSize[24m     [4mFirst Load JS[24m
-┌ ○ /_not-found                          873 B          [37m[1m88.1 kB[22m[39m
-├ ƒ /api/admin/users                     0 B                [37m[1m0 B[22m[39m
-├ ƒ /api/assets                          0 B                [37m[1m0 B[22m[39m
-├ ƒ /api/auth/login                      0 B                [37m[1m0 B[22m[39m
-├ ƒ /api/auth/set-password               0 B                [37m[1m0 B[22m[39m
-├ ○ /api/properties                      0 B                [37m[1m0 B[22m[39m
-├ ƒ /properties                          138 B          [37m[1m87.3 kB[22m[39m
-└ ○ /users                               1.93 kB        [37m[1m89.1 kB[22m[39m
-+ First Load JS shared by all            [37m[1m87.2 kB[22m[39m
-  ├ chunks/1dd3208c-1bfa912d86ba96c5.js  53.6 kB
-  ├ chunks/528-1dac3e638f0b00ec.js       31.7 kB
-  └ other shared chunks (total)          1.86 kB
+./app/api/admin/floors/route.ts
+Error: 
+  [31mx[0m Expected '>', got 'style'
+     ,-[[36;1;4m/Users/lohithl/Development/asset-pulse/apps/web/app/api/admin/floors/route.ts[0m:201:1]
+ [2m201[0m |   );
+ [2m202[0m | 
+ [2m203[0m |   return (
+ [2m204[0m |     <div style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: "1400px", margin: "0 auto" }}>
+     : [31;1m         ^^^^^[0m
+ [2m205[0m |       {/* Header */}
+ [2m206[0m |       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
+ [2m207[0m |         <div>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/api/admin/floors/route.ts
 
 
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
-
-[?25h
+> Build failed because of webpack errors
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

@@ -40,6 +40,16 @@ export const floors = pgTable('floors', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+export const rooms = pgTable('rooms', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  propertyId: uuid('property_id').references(() => properties.id, { onDelete: 'cascade' }).notNull(),
+  buildingId: uuid('building_id').references(() => buildings.id, { onDelete: 'cascade' }).notNull(),
+  floorId: uuid('floor_id').references(() => floors.id, { onDelete: 'cascade' }).notNull(),
+  code: text('code').notNull(),
+  name: text('name').notNull(), // e.g., "Electrical Room", "Server Room 101"
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // 2. TAXONOMY
 export const assetCategories = pgTable('asset_categories', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -56,7 +66,7 @@ export const assetSubcategories = pgTable('asset_subcategories', {
   // 💡 Explicitly pass the database column name in snake_case:
   curatedMakes: jsonb('curated_makes').$type<string[]>().default([]),
   specSchema: jsonb('spec_schema').$type<any[]>().default([]),
-  
+
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -81,6 +91,7 @@ export const userScopes = pgTable('user_scopes', {
   propertyId: uuid('property_id').references(() => properties.id, { onDelete: 'cascade' }).notNull(),
   buildingId: uuid('building_id').references(() => buildings.id, { onDelete: 'cascade' }),
   floorId: uuid('floor_id').references(() => floors.id, { onDelete: 'cascade' }),
+  roomId: uuid('room_id').references(() => rooms.id, { onDelete: 'cascade' }),
   categoryId: uuid('category_id').references(() => assetCategories.id, { onDelete: 'cascade' }),
   canRegister: boolean('can_register').default(true).notNull(),
   canAudit: boolean('can_audit').default(true).notNull(),
@@ -100,6 +111,7 @@ export const assets = pgTable('assets', {
   propertyId: uuid('property_id').references(() => properties.id).notNull(),
   buildingId: uuid('building_id').references(() => buildings.id),
   floorId: uuid('floor_id').references(() => floors.id),
+  roomId: uuid('room_id').references(() => rooms.id),
   
   gridReference: text('grid_reference'),
   latitude: doublePrecision('latitude'),
