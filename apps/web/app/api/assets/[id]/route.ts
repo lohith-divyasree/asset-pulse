@@ -1,34 +1,38 @@
 import { NextResponse } from "next/server";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, ilike } from "drizzle-orm";
 import { db } from "@asset-pulse/db";
 import { assets } from "@asset-pulse/db/schema";
 
-// 🟢 GET Single Asset (Required for Edit Mode)
+// Helper to check if string is a valid Postgres UUID
+function isUuid(str: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    str,
+  );
+}
+
+// 🟢 GET Single Asset (Accessible to Auditors, Surveyors, and Admins)
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const userId = req.headers.get("x-user-id");
-    const assetId = params.id;
+    const { id: identifier } = await params;
 
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized: Missing x-user-id header." },
-        { status: 401 },
-      );
-    }
+    // Build condition safely avoiding UUID type-cast crashes & allow case-insensitive assetCode lookup
+    const identifierCondition = isUuid(identifier)
+      ? or(eq(assets.id, identifier), ilike(assets.assetCode, identifier))
+      : ilike(assets.assetCode, identifier);
 
-    // 1. Fetch Asset and verify surveyor ownership/access
+    // Fetch Asset without restriction on surveyorId
     const [asset] = await db
       .select()
       .from(assets)
-      .where(and(eq(assets.id, assetId), eq(assets.surveyorId, userId)))
+      .where(identifierCondition)
       .limit(1);
 
     if (!asset) {
       return NextResponse.json(
-        { success: false, error: "Asset not found or unauthorized to view." },
+        { success: false, error: "Asset not found." },
         { status: 404 },
       );
     }
@@ -43,14 +47,14 @@ export async function GET(
   }
 }
 
-// UPDATE Asset
+// 🟡 UPDATE Asset
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = req.headers.get("x-user-id");
-    const assetId = params.id;
+    const { id: identifier } = await params;
     const body = await req.json();
 
     if (!userId) {
@@ -60,21 +64,25 @@ export async function PUT(
       );
     }
 
-    // 1. Verify Asset Exists and Belongs to the Surveyor
+    const identifierCondition = isUuid(identifier)
+      ? or(eq(assets.id, identifier), ilike(assets.assetCode, identifier))
+      : ilike(assets.assetCode, identifier);
+
+    // Fetch existing asset record
     const [existingAsset] = await db
       .select()
       .from(assets)
-      .where(and(eq(assets.id, assetId), eq(assets.surveyorId, userId)))
+      .where(identifierCondition)
       .limit(1);
 
     if (!existingAsset) {
       return NextResponse.json(
-        { success: false, error: "Asset not found or unauthorized to edit." },
+        { success: false, error: "Asset not found." },
         { status: 404 },
       );
     }
 
-    // 2. Perform Update
+    // Perform Update targeting the primary key UUID
     const [updatedAsset] = await db
       .update(assets)
       .set({
@@ -90,11 +98,11 @@ export async function PUT(
         completionScore: body.completionScore ?? existingAsset.completionScore,
         photoUrls: Array.isArray(body.photoUrls)
           ? body.photoUrls
-          : existingAsset.photoUrls, // 👈 Added photoUrls handling
+          : existingAsset.photoUrls,
         specifications: body.specifications ?? existingAsset.specifications,
         updatedAt: new Date(),
       })
-      .where(eq(assets.id, assetId))
+      .where(eq(assets.id, existingAsset.id))
       .returning();
 
     return NextResponse.json({ success: true, data: updatedAsset });
@@ -107,14 +115,14 @@ export async function PUT(
   }
 }
 
-// DELETE Asset
+// 🔴 DELETE Asset
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = req.headers.get("x-user-id");
-    const assetId = params.id;
+    const { id: identifier } = await params;
 
     if (!userId) {
       return NextResponse.json(
@@ -123,15 +131,18 @@ export async function DELETE(
       );
     }
 
-    // Verify ownership and delete
+    const identifierCondition = isUuid(identifier)
+      ? or(eq(assets.id, identifier), ilike(assets.assetCode, identifier))
+      : ilike(assets.assetCode, identifier);
+
     const [deletedAsset] = await db
       .delete(assets)
-      .where(and(eq(assets.id, assetId), eq(assets.surveyorId, userId)))
+      .where(identifierCondition)
       .returning();
 
     if (!deletedAsset) {
       return NextResponse.json(
-        { success: false, error: "Asset not found or unauthorized to delete." },
+        { success: false, error: "Asset not found." },
         { status: 404 },
       );
     }

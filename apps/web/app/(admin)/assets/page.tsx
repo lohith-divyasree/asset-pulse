@@ -58,6 +58,9 @@ async function getAssets() {
         // Surveyor Information
         surveyorName: users.name,
         surveyorEmail: users.email,
+
+        lastServicedAt: assets.lastServicedAt,
+        nextMaintenanceDate: assets.nextMaintenanceDate,
       })
       .from(assets)
       .leftJoin(properties, eq(assets.propertyId, properties.id))

@@ -23,6 +23,7 @@
     }
   },
   "dependencies": {
-    "@vercel/blob": "^2.6.1"
+    "@vercel/blob": "^2.6.1",
+    "date-fns": "^4.4.0"
   }
 }

@@ -8,6 +8,7 @@ import {
   integer,
   pgEnum,
   boolean,
+  date,
 } from "drizzle-orm/pg-core";
 
 // Enums
@@ -23,13 +24,6 @@ export const assetStatusEnum = pgEnum("asset_status", [
   "enriched",
   "register_ready",
 ]);
-export const conditionRatingEnum = pgEnum("condition_rating", [
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-]);
 export const criticalityEnum = pgEnum("criticality_level", [
   "high",
   "medium",
@@ -40,6 +34,12 @@ export const assetOpStatusEnum = pgEnum("asset_op_status", [
   "maintenance",
   "breakdown",
   "decommissioned",
+]);
+export const conditionRatingEnum = pgEnum("condition_rating", [
+  "EXCELLENT",
+  "GOOD",
+  "NEEDS_REPAIR",
+  "CRITICAL",
 ]);
 
 // 1. SPATIAL HIERARCHY
@@ -100,6 +100,9 @@ export const assetCategories = pgTable("asset_categories", {
   code: text("code").notNull().unique(),
   name: text("name").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  defaultMaintenanceIntervalDays: integer(
+    "default_maintenance_interval_days",
+  ).default(90),
 });
 
 export const assetSubcategories = pgTable("asset_subcategories", {
@@ -112,8 +115,8 @@ export const assetSubcategories = pgTable("asset_subcategories", {
   // 💡 Explicitly pass the database column name in snake_case:
   curatedMakes: jsonb("curated_makes").$type<string[]>().default([]),
   specSchema: jsonb("spec_schema").$type<any[]>().default([]),
-
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  maintenanceIntervalDays: integer("maintenance_interval_days"), // Overrides category if present
 });
 
 // 3. USERS & SCOPED ACCESS CONTROL
@@ -200,6 +203,10 @@ export const assets = pgTable("assets", {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
+
+  // 🛠️ NEW: Maintenance Tracking Columns
+  lastServicedAt: timestamp("last_serviced_at"),
+  nextMaintenanceDate: date("next_maintenance_date"),
 });
 
 // 5. AUDIT LOGS
@@ -213,5 +220,26 @@ export const auditLogs = pgTable("audit_logs", {
     .notNull(),
   action: text("action").notNull(),
   changes: jsonb("changes").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// 6. NEW SPECIFIC MAINTENANCE INSPECTION LOGS TABLE
+export const assetMaintenanceLogs = pgTable("asset_maintenance_logs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  assetId: uuid("asset_id")
+    .references(() => assets.id, { onDelete: "cascade" })
+    .notNull(),
+  auditorId: uuid("auditor_id")
+    .references(() => users.id)
+    .notNull(),
+
+  conditionRating: conditionRatingEnum("condition_rating").notNull(),
+  operationalStatus: assetOpStatusEnum("operational_status"),
+  notes: text("notes"),
+  photoUrls: jsonb("photo_urls").$type<string[]>().default([]).notNull(),
+
+  servicedAt: timestamp("serviced_at").defaultNow().notNull(),
+  nextScheduledDate: date("next_scheduled_date").notNull(),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
